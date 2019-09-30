@@ -30,7 +30,13 @@ mainLoop:
         jmp mainLoop
         
 irq: {
+        pha
+        lda #BLACK
+        sta BG_COL
+        lda #BLUE
+        sta BG_COL
         dec $d019
+        pla
         rti
 }
 
