@@ -16,7 +16,7 @@
 .label IRQ_HI = $ffff
 .label TECH_TECH_WIDTH = 9*8
 
-.label RASTER_IRQ_POS = $42
+.label RASTER_IRQ_POS = $43
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
