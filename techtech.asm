@@ -32,8 +32,11 @@ mainLoop:
 irq: {
         pha
         lda #BLACK
+        .for(var i = 0; i < 19; i++) {
+                nop
+        }
         sta BG_COL
-        .for(var i = 0; i < 20; i++) {
+        .for(var i = 0; i < 17; i++) {
                 nop
         }
         lda #BLUE
