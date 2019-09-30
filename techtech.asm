@@ -16,7 +16,8 @@
 .label IRQ_HI = $ffff
 .label TECH_TECH_WIDTH = 9*8
 
-.label RASTER_IRQ_POS = $43
+.label IRQ_HANDLER = irqGoodLine
+.label RASTER_IRQ_POS = $46
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
@@ -29,7 +30,24 @@ mainLoop:
         dec BORD_COL
         jmp mainLoop
         
-irq: {
+irqGoodLine: {
+        pha
+        lda #BLACK
+        .for(var i = 0; i < 28; i++) {
+                nop
+        }
+        sta BG_COL
+        .for(var i = 0; i < 20; i++) {
+                nop
+        }
+        lda #BLUE
+        sta BG_COL
+        dec $d019
+        pla
+        rti
+}
+
+irqBadLine: {
         pha
         lda #BLACK
         .for(var i = 0; i < 19; i++) {
@@ -69,10 +87,10 @@ init: {
         ora #%00000101
         sta IO_REG
         
-        lda #<irq
+        lda #<IRQ_HANDLER
         sta NMI_LO
         sta IRQ_LO
-        lda #>irq
+        lda #>IRQ_HANDLER
         sta NMI_HI
         sta IRQ_HI
         
