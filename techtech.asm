@@ -16,18 +16,35 @@
 .label IRQ_HI = $ffff
 .label TECH_TECH_WIDTH = 9*8
 
+.label RASTER_IRQ_POS = $42
+
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
 *=$080d "Program"
 start:
         jsr init
+        jsr installIrq
 mainLoop:
         inc BORD_COL
         dec BORD_COL
         jmp mainLoop
         
 irq: {
+        dec $d019
         rti
+}
+
+installIrq: {
+        sei
+        lda #RASTER_IRQ_POS
+        sta RASTER
+        lda CONTROL_1
+        and #%01111111
+        sta CONTROL_1
+        lda #$01
+        sta IMR
+        cli
+        rts
 }
 
 init: {
