@@ -14,10 +14,10 @@
 .label NMI_HI = $fffb
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
-.label TECH_TECH_WIDTH = 9*8
+.label TECH_TECH_WIDTH = 11*8
 
-.label IRQ_HANDLER = irqGoodLine
-.label RASTER_IRQ_POS = $46
+.label IRQ_HANDLER = irqTechTech
+.label RASTER_IRQ_POS = $32
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
@@ -30,6 +30,50 @@ mainLoop:
         dec BORD_COL
         jmp mainLoop
         
+techTechData:  .fill TECH_TECH_WIDTH, round(3.5 + 3.5*sin(toRadians(i*360/TECH_TECH_WIDTH))) ; .byte 0; .byte $ff
+
+irqTechTech: {
+
+          pha
+          txa
+          pha
+          tya
+          pha
+          
+          lda CONTROL_2
+          and #$11111000
+          ora #1
+          sta CONTROL_2
+          
+          ldx #$00
+        loop:
+          lda CONTROL_2
+          and #%11111000
+          ora techTechData, x
+          cmp #$ff
+          beq endTechTech
+          ldy RASTER
+          cmpAgain: cpy RASTER
+          beq cmpAgain
+          sta CONTROL_2
+          inx
+          jmp loop
+        endTechTech:
+          
+          lda CONTROL_2
+          and #$11111000
+          ora #0
+          sta CONTROL_2
+          
+          pla
+          tay
+          pla
+          tax
+          pla
+          dec $d019
+          rti
+          }   
+
 irqGoodLine: {
         pha
         lda #BLACK
