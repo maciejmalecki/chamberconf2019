@@ -15,3 +15,14 @@
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
 .label TECH_TECH_WIDTH = 9*8
+
+*=$0801 "Basic Upstart"
+BasicUpstart(start)
+*=$080d "Program"
+start:
+        lda #BLACK
+        sta BORD_COL
+mainLoop:
+        inc BORD_COL
+        dec BORD_COL
+        jmp mainLoop
