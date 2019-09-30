@@ -65,6 +65,17 @@ irqTechTech: {
           ora #0
           sta CONTROL_2
           
+          lda techTechData
+          pha
+  
+          .for(var i = 0; i < TECH_TECH_WIDTH - 1; i++) {
+                lda techTechData + i + 1
+                sta techTechData + i
+          }
+  
+          pla
+          sta techTechData + TECH_TECH_WIDTH - 1
+          
           pla
           tay
           pla
