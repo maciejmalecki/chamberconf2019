@@ -20,9 +20,39 @@
 BasicUpstart(start)
 *=$080d "Program"
 start:
-        lda #BLACK
-        sta BORD_COL
+        jsr init
 mainLoop:
         inc BORD_COL
         dec BORD_COL
         jmp mainLoop
+        
+irq: {
+        rti
+}
+
+init: {
+        lda #BLACK
+        sta BORD_COL
+        
+        sei
+        lda IO_REG
+        and #%11111000
+        ora #%00000101
+        sta IO_REG
+        
+        lda #<irq
+        sta NMI_LO
+        sta IRQ_LO
+        lda #>irq
+        sta NMI_HI
+        sta IRQ_HI
+        
+        lda #$7f
+        sta CIA1_ICR
+        sta CIA2_ICR
+        lda CIA1_ICR
+        lda CIA2_ICR
+        
+        cli
+        rts
+}
