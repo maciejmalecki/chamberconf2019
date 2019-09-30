@@ -26,8 +26,6 @@ start:
         jsr init
         jsr installIrq
 mainLoop:
-        inc BORD_COL
-        dec BORD_COL
         jmp mainLoop
         
 techTechData:  .fill TECH_TECH_WIDTH, round(3.5 + 3.5*sin(toRadians(i*360/TECH_TECH_WIDTH))) ; .byte 0; .byte $ff
@@ -133,9 +131,6 @@ installIrq: {
 }
 
 init: {
-        lda #BLACK
-        sta BORD_COL
-        
         sei
         lda IO_REG
         and #%11111000
