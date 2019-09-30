@@ -33,6 +33,9 @@ irq: {
         pha
         lda #BLACK
         sta BG_COL
+        .for(var i = 0; i < 20; i++) {
+                nop
+        }
         lda #BLUE
         sta BG_COL
         dec $d019
