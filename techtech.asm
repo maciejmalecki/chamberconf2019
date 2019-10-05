@@ -31,8 +31,16 @@ mainLoop:
         
 irqHandler: {
         pha
+
+        .for (var i = 0; i < 20; i++) {        
+                nop
+        }
+        
         lda #WHITE
         sta BG_COL
+        .for (var i = 0; i < 7; i++) {        
+                nop
+        }
         lda #BLACK
         sta BG_COL
         dec IRR
