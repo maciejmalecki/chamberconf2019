@@ -14,16 +14,50 @@
 .label NMI_HI = $fffb
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
+.label IRQ_HANDLER = irqHandler
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
 *=$080d "Program"
 start:
-        lda #BLACK
-        sta BORD_COL
+        jsr init
+        jsr setupScreen
 mainLoop:
         inc BORD_COL
         dec BORD_COL
         jmp mainLoop
-          
-         
+        
+irqHandler: {
+        rti
+}
+        
+setupScreen: {
+        lda #BLACK
+        sta BORD_COL
+        rts
+}
+           
+init: {
+        sei
+        lda IO_REG
+        and #%11111000
+        ora #%00000101
+        sta IO_REG
+        
+        lda #<IRQ_HANDLER
+        sta NMI_LO
+        sta IRQ_LO
+        lda #>IRQ_HANDLER
+        sta NMI_HI
+        sta IRQ_HI
+        
+        lda #$7f
+        sta CIA1_ICR
+        sta CIA2_ICR
+        lda CIA1_ICR
+        lda CIA2_ICR
+        
+        cli        
+        rts
+}
+      
