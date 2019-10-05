@@ -14,7 +14,10 @@
 .label NMI_HI = $fffb
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
-.label TECH_TECH_WIDTH = 9*8
+.label TECH_TECH_WIDTH = 11*8
+
+.label IRQ_HANDLER = irqTechTech
+.label RASTER_IRQ_POS = $32
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
@@ -23,43 +26,10 @@ start:
         jsr init
         jsr installIrq
 mainLoop:
-        //inc BORD_COL
-        //dec BORD_COL
         jmp mainLoop
         
-irqBadLine: {
-        pha
-        lda #BLACK
-        .for (var i = 0; i < 20; i++) {
-                nop
-        }
-        sta BG_COL
-        .for (var i = 0; i < 17; i++) {
-                nop
-        }
-        lda #BLUE
-        sta BG_COL
-        dec IRR
-        pla
-        rti
-}
-irqGoodLine: {
-        pha
-        lda #BLACK
-        .for (var i = 0; i < 28; i++) {
-                nop
-        }
-        sta BG_COL
-        .for (var i = 0; i < 20; i++) {
-                nop
-        }
-        lda #BLUE
-        sta BG_COL
-        dec IRR
-        pla
-        rti
-}
 techTechData:  .fill TECH_TECH_WIDTH, round(3.5 + 3.5*sin(toRadians(i*360/TECH_TECH_WIDTH))) ; .byte 0; .byte $ff
+
 irqTechTech: {
 
           pha
@@ -113,10 +83,43 @@ irqTechTech: {
           rti
           }   
 
+irqGoodLine: {
+        pha
+        lda #BLACK
+        .for(var i = 0; i < 28; i++) {
+                nop
+        }
+        sta BG_COL
+        .for(var i = 0; i < 20; i++) {
+                nop
+        }
+        lda #BLUE
+        sta BG_COL
+        dec $d019
+        pla
+        rti
+}
+
+irqBadLine: {
+        pha
+        lda #BLACK
+        .for(var i = 0; i < 19; i++) {
+                nop
+        }
+        sta BG_COL
+        .for(var i = 0; i < 17; i++) {
+                nop
+        }
+        lda #BLUE
+        sta BG_COL
+        dec $d019
+        pla
+        rti
+}
 
 installIrq: {
         sei
-        lda #$3a
+        lda #RASTER_IRQ_POS
         sta RASTER
         lda CONTROL_1
         and #%01111111
@@ -128,19 +131,16 @@ installIrq: {
 }
 
 init: {
-        lda #BLACK
-        sta BORD_COL
-        
         sei
         lda IO_REG
         and #%11111000
         ora #%00000101
         sta IO_REG
         
-        lda #<irqTechTech
+        lda #<IRQ_HANDLER
         sta NMI_LO
         sta IRQ_LO
-        lda #>irqTechTech
+        lda #>IRQ_HANDLER
         sta NMI_HI
         sta IRQ_HI
         
@@ -151,5 +151,5 @@ init: {
         lda CIA2_ICR
         
         cli
-        rts   
+        rts
 }
