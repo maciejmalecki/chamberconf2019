@@ -19,7 +19,11 @@
 BasicUpstart(start)
 *=$080d "Program"
 start:
-
-
+        lda #BLACK
+        sta BORD_COL
+mainLoop:
+        inc BORD_COL
+        dec BORD_COL
+        jmp mainLoop
           
          
