@@ -15,6 +15,7 @@
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
 .label IRQ_HANDLER = irqHandler
+.label RASTER_IRQ_POS = $62
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
@@ -22,15 +23,30 @@ BasicUpstart(start)
 start:
         jsr init
         jsr setupScreen
+        jsr installIrq
 mainLoop:
         inc BORD_COL
         dec BORD_COL
         jmp mainLoop
         
 irqHandler: {
+        dec IRR
         rti
 }
         
+installIrq: {
+        sei
+        lda #RASTER_IRQ_POS
+        sta RASTER
+        lda CONTROL_1
+        and #%01111111
+        sta CONTROL_1
+        lda #$01
+        sta IMR
+        cli
+        rts
+}
+
 setupScreen: {
         lda #BLACK
         sta BORD_COL
