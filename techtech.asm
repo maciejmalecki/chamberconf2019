@@ -14,8 +14,8 @@
 .label NMI_HI = $fffb
 .label IRQ_LO = $fffe
 .label IRQ_HI = $ffff
-.label IRQ_HANDLER = irqHandler
-.label RASTER_IRQ_POS = $62
+.label IRQ_HANDLER = irqGoodLine
+.label RASTER_IRQ_POS = $65
 
 *=$0801 "Basic Upstart"
 BasicUpstart(start)
@@ -29,7 +29,7 @@ mainLoop:
         dec BORD_COL
         jmp mainLoop
         
-irqHandler: {
+irqBadLine: {
         pha
 
         .for (var i = 0; i < 20; i++) {        
@@ -39,6 +39,24 @@ irqHandler: {
         lda #WHITE
         sta BG_COL
         .for (var i = 0; i < 7; i++) {        
+                nop
+        }
+        lda #BLACK
+        sta BG_COL
+        dec IRR
+        pla
+        rti
+}
+irqGoodLine: {
+        pha
+
+        .for (var i = 0; i < 28; i++) {        
+                nop
+        }
+        
+        lda #WHITE
+        sta BG_COL
+        .for (var i = 0; i < 20; i++) {        
                 nop
         }
         lda #BLACK
