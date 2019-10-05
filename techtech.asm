@@ -30,7 +30,13 @@ mainLoop:
         jmp mainLoop
         
 irqHandler: {
+        pha
+        lda #WHITE
+        sta BG_COL
+        lda #BLACK
+        sta BG_COL
         dec IRR
+        pla
         rti
 }
         
