@@ -34,6 +34,30 @@ irqHandler: {
 setupScreen: {
         lda #BLACK
         sta BORD_COL
+        sta BG_COL
+        
+        ldx #$00
+        loop:
+                lda screenData, x
+                sta SCREEN, x
+                lda screenData + $100, x
+                sta SCREEN + $100, x
+                lda screenData + $200, x
+                sta SCREEN + $200, x
+                lda screenData + $300, x
+                sta SCREEN + $300, x
+
+                lda colorData, x
+                sta COLOR_RAM, x
+                lda colorData + $100, x
+                sta COLOR_RAM + $100, x
+                lda colorData + $200, x
+                sta COLOR_RAM + $200, x
+                lda colorData + $300, x
+                sta COLOR_RAM + $300, x
+                inx
+                bne loop
+        
         rts
 }
            
