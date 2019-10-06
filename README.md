@@ -18,6 +18,8 @@ created.
 Easiest way to run it is to use an emulator, for example: ```x64 techtech.prg```
 launches it using Vice.
 
+All steps are included on ```live``` branch. Just checkout it.
+
 ## Hardware setup
 * I use real Commodore 64C (for first part of live coding and as target machine of cross 
 development) and a laptop (for slides, and second live coding: cross development
