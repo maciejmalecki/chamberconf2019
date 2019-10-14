@@ -16,7 +16,7 @@ Just type: ```gradlew build``` and in result a runnable ```techtech.prg``` file 
 created. 
 
 Easiest way to run it is to use an emulator, for example: ```x64 techtech.prg```
-launches it using Vice.
+launches it using [Vice](http://vice-emu.sourceforge.net/).
 
 All steps are included on ```live``` branch. Just checkout it.
 
